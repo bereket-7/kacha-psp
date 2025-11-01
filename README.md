@@ -1,12 +1,14 @@
 # Kacha PSP Integration
 
-This Go application provides integration with the Kacha Payment Service Provider (PSP) API for handling Consumer-to-Business (C2B) payments.
+This Go application provides integration with the Kacha Payment Service Provider (PSP) API for handling Consumer-to-Business (C2B) payments and Business-to-Consumer (B2C) transfers.
 
 ## Features
 
 - **OTP-Based Payment Authentication**: Initiate payment requests that send OTPs to customers via SMS
 - **Payment Authorization**: Authorize payments using reference numbers and OTPs
 - **Push USSD Payment**: Initiate direct push payment transactions via USSD authentication
+- **B2C Transfer Validation**: Validate transfers before execution (checks account validity and sufficient funds)
+- **B2C Transfer Execution**: Execute transfers to customer accounts
 - **Callback Handling**: Receive and process asynchronous transaction notifications
 
 ## API Endpoints
@@ -29,6 +31,17 @@ This Go application provides integration with the Kacha Payment Service Provider
 2. **Callback Handler** (`POST /api/payment/callback`)
    - Receives transaction results from Kacha
    - Process payment status updates
+
+### B2C Transfer Flow
+
+1. **Validate Transfer** (`POST /api/transfer/validate`)
+   - Validates customer account number (phone number)
+   - Checks if business account has sufficient funds
+   - Returns customer information and transfer details with status 'PREPARED' if successful
+
+2. **Execute Transfer** (`POST /api/transfer`)
+   - Executes the actual transfer to the customer account
+   - Should be called after successful validation
 
 ## Setup
 
@@ -118,6 +131,65 @@ curl -X POST http://localhost:8080/api/payment/push-ussd \
   }'
 ```
 
+### B2C Transfer Flow
+
+#### 1. Validate Transfer
+
+```bash
+curl -X POST http://localhost:8080/api/transfer/validate \
+  -H "Content-Type: application/json" \
+  -d '{
+    "to": "251989840054",
+    "amount": 100,
+    "reason": "fee",
+    "short_code": "7865"
+  }'
+```
+
+Response:
+```json
+{
+  "success": true,
+  "status": "PREPARED",
+  "message": "Transfer validated successfully",
+  "to": "251989840054",
+  "amount": 100,
+  "reason": "fee",
+  "short_code": "7865",
+  "customer_info": {
+    "phone": "251989840054",
+    "name": "John Doe",
+    "account_id": "ACC123456"
+  }
+}
+```
+
+#### 2. Execute Transfer
+
+```bash
+curl -X POST http://localhost:8080/api/transfer \
+  -H "Content-Type: application/json" \
+  -d '{
+    "to": "251989840054",
+    "amount": 100,
+    "reason": "fee",
+    "short_code": "7865"
+  }'
+```
+
+Response:
+```json
+{
+  "success": true,
+  "status": "completed",
+  "message": "Transfer completed successfully",
+  "transaction_id": "TXN123456789",
+  "to": "251989840054",
+  "amount": 100,
+  "reference": "REF987654321"
+}
+```
+
 ## Using the Kacha Client Directly
 
 You can also use the Kacha client directly in your application:
@@ -163,6 +235,33 @@ func main() {
     }
     
     // Payment authorized
+    
+    // B2C Transfer Example
+    transferReq := kacha.TransferRequest{
+        To:        "251989840054",
+        Amount:    100,
+        Reason:    "fee",
+        ShortCode: "7865",
+    }
+    
+    // Validate transfer first
+    validateResp, err := client.ValidateTransfer(transferReq)
+    if err != nil {
+        // Handle error
+        return
+    }
+    
+    // Execute transfer if validation was successful
+    if validateResp.Status == "PREPARED" {
+        transferResp, err := client.Transfer(transferReq)
+        if err != nil {
+            // Handle error
+            return
+        }
+        
+        // Transfer completed
+        transactionID := transferResp.TransactionID
+    }
 }
 ```
 
@@ -173,10 +272,13 @@ kacha-psp/
 ├── cmd/
 │   └── server/
 │       └── main.go          # Example server implementation
+├── examples/
+│   └── basic_usage.go       # Example usage of the client
 ├── internal/
 │   └── kacha/
 │       ├── client.go        # Kacha API client
-│       ├── payment.go       # Payment methods
+│       ├── payment.go       # Payment methods (C2B)
+│       ├── transfer.go      # Transfer methods (B2C)
 │       └── types.go         # Request/response types
 ├── go.mod
 ├── go.sum
@@ -188,8 +290,10 @@ kacha-psp/
 1. **Trace Number**: Must be unique for every payment request
 2. **Callback URL**: Required for Push USSD payments. Must be publicly accessible
 3. **Authentication**: Uses Basic Authentication with App ID as username and API Key as password
-4. **Error Handling**: All methods return errors that should be handled appropriately
-5. **Production**: Remember to disable debug mode and set appropriate timeouts in production
+4. **Transfer Validation**: Always validate transfers before execution to ensure account validity and sufficient funds
+5. **Short Code**: Required for B2C transfers. Get this from your Kacha Merchant Portal
+6. **Error Handling**: All methods return errors that should be handled appropriately
+7. **Production**: Remember to disable debug mode and set appropriate timeouts in production
 
 ## Testing
 
