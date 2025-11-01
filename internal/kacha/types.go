@@ -1,0 +1,71 @@
+package kacha
+
+// PaymentRequest represents the request body for initiating a payment request
+type PaymentRequest struct {
+	Phone      string `json:"phone" validate:"required"`
+	Amount     int    `json:"amount" validate:"required,min=1"`
+	TraceNumber string `json:"trace_number" validate:"required"`
+	Reason     string `json:"reason" validate:"required"`
+}
+
+// PaymentAuthorizeRequest represents the request body for authorizing a payment
+type PaymentAuthorizeRequest struct {
+	Reference string `json:"reference" validate:"required"`
+	OTP       int    `json:"otp" validate:"required"`
+}
+
+// PushUSSDRequest represents the request body for Push USSD payment
+type PushUSSDRequest struct {
+	Phone       string `json:"phone" validate:"required"`
+	Amount      int    `json:"amount" validate:"required,min=1"`
+	TraceNumber string `json:"trace_number" validate:"required"`
+	CallbackURL string `json:"callback_url" validate:"required,url"`
+}
+
+// PaymentRequestResponse represents the response from payment request endpoint
+type PaymentRequestResponse struct {
+	Success   bool   `json:"success,omitempty"`
+	Reference string `json:"reference,omitempty"`
+	Message   string `json:"message,omitempty"`
+	Status    string `json:"status,omitempty"`
+	TraceNumber string `json:"trace_number,omitempty"`
+}
+
+// PaymentAuthorizeResponse represents the response from payment authorize endpoint
+type PaymentAuthorizeResponse struct {
+	Success   bool   `json:"success,omitempty"`
+	Message   string `json:"message,omitempty"`
+	Status    string `json:"status,omitempty"`
+	Reference string `json:"reference,omitempty"`
+	TransactionID string `json:"transaction_id,omitempty"`
+}
+
+// PushUSSDResponse represents the response from Push USSD endpoint
+type PushUSSDResponse struct {
+	Success   bool   `json:"success,omitempty"`
+	Message   string `json:"message,omitempty"`
+	Status    string `json:"status,omitempty"`
+	TraceNumber string `json:"trace_number,omitempty"`
+}
+
+// CallbackNotification represents the callback notification from Kacha
+type CallbackNotification struct {
+	Success      bool   `json:"success,omitempty"`
+	Status       string `json:"status,omitempty"`
+	TraceNumber  string `json:"trace_number,omitempty"`
+	Reference    string `json:"reference,omitempty"`
+	TransactionID string `json:"transaction_id,omitempty"`
+	Amount       int    `json:"amount,omitempty"`
+	Phone        string `json:"phone,omitempty"`
+	Message      string `json:"message,omitempty"`
+	Timestamp    string `json:"timestamp,omitempty"`
+}
+
+// ErrorResponse represents an error response from the API
+type ErrorResponse struct {
+	Success bool   `json:"success,omitempty"`
+	Message string `json:"message,omitempty"`
+	Error   string `json:"error,omitempty"`
+	Code    string `json:"code,omitempty"`
+}
+
