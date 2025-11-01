@@ -3,6 +3,7 @@ package kacha
 import (
 	"encoding/base64"
 	"fmt"
+	"time"
 
 	"github.com/go-resty/resty/v2"
 )
@@ -16,6 +17,10 @@ const (
 	PaymentAuthorizeEndpoint = "/api/v1/orgs/payment/authorize"
 	// PushUSSDEndpoint is the endpoint for Push USSD payment
 	PushUSSDEndpoint = "/api/v1/orgs/payment/request/push_ussd"
+	// TransferValidateEndpoint is the endpoint for validating transfers (B2C)
+	TransferValidateEndpoint = "/api/v1/orgs/transfer/validate"
+	// TransferEndpoint is the endpoint for executing transfers (B2C)
+	TransferEndpoint = "/api/v1/orgs/transfer"
 )
 
 // Client represents a Kacha API client
@@ -62,8 +67,8 @@ func (c *Client) SetDebug(debug bool) {
 	c.httpClient.SetDebug(debug)
 }
 
-// SetTimeout sets the HTTP client timeout
-func (c *Client) SetTimeout(timeout int) {
-	c.httpClient.SetTimeout(resty.Duration(timeout))
+// SetTimeout sets the HTTP client timeout in seconds
+func (c *Client) SetTimeout(timeoutSeconds int) {
+	c.httpClient.SetTimeout(time.Duration(timeoutSeconds) * time.Second)
 }
 
