@@ -61,6 +61,44 @@ type CallbackNotification struct {
 	Timestamp    string `json:"timestamp,omitempty"`
 }
 
+// TransferRequest represents the request body for transfer operations (B2C)
+type TransferRequest struct {
+	To        string `json:"to" validate:"required"`
+	Amount    int    `json:"amount" validate:"required,min=1"`
+	Reason    string `json:"reason" validate:"required"`
+	ShortCode string `json:"short_code" validate:"required"`
+}
+
+// TransferValidateResponse represents the response from transfer validate endpoint
+type TransferValidateResponse struct {
+	Success   bool   `json:"success,omitempty"`
+	Status    string `json:"status,omitempty"`
+	Message   string `json:"message,omitempty"`
+	To        string `json:"to,omitempty"`
+	Amount    int    `json:"amount,omitempty"`
+	Reason    string `json:"reason,omitempty"`
+	ShortCode string `json:"short_code,omitempty"`
+	CustomerInfo *CustomerInfo `json:"customer_info,omitempty"`
+}
+
+// CustomerInfo represents customer information returned from validation
+type CustomerInfo struct {
+	Phone     string `json:"phone,omitempty"`
+	Name      string `json:"name,omitempty"`
+	AccountID string `json:"account_id,omitempty"`
+}
+
+// TransferResponse represents the response from transfer endpoint
+type TransferResponse struct {
+	Success       bool   `json:"success,omitempty"`
+	Status        string `json:"status,omitempty"`
+	Message       string `json:"message,omitempty"`
+	TransactionID string `json:"transaction_id,omitempty"`
+	To            string `json:"to,omitempty"`
+	Amount        int    `json:"amount,omitempty"`
+	Reference     string `json:"reference,omitempty"`
+}
+
 // ErrorResponse represents an error response from the API
 type ErrorResponse struct {
 	Success bool   `json:"success,omitempty"`
