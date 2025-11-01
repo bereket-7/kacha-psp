@@ -129,6 +129,52 @@ func main() {
 		})
 	})
 
+	// Transfer validate endpoint (B2C)
+	r.POST("/api/transfer/validate", func(c *gin.Context) {
+		var req kacha.TransferRequest
+		if err := c.ShouldBindJSON(&req); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		// Validate required fields
+		if req.To == "" || req.Amount <= 0 || req.Reason == "" || req.ShortCode == "" {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "to, amount, reason, and short_code are required"})
+			return
+		}
+
+		resp, err := client.ValidateTransfer(req)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+
+		c.JSON(http.StatusOK, resp)
+	})
+
+	// Transfer endpoint (B2C)
+	r.POST("/api/transfer", func(c *gin.Context) {
+		var req kacha.TransferRequest
+		if err := c.ShouldBindJSON(&req); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		// Validate required fields
+		if req.To == "" || req.Amount <= 0 || req.Reason == "" || req.ShortCode == "" {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "to, amount, reason, and short_code are required"})
+			return
+		}
+
+		resp, err := client.Transfer(req)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+
+		c.JSON(http.StatusOK, resp)
+	})
+
 	// Start server
 	port := os.Getenv("PORT")
 	if port == "" {
