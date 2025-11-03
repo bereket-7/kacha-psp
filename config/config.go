@@ -21,20 +21,21 @@ func Load() (*AppConfig, error) {
 		log.Printf("No .env file found: %v", err)
 	}
 
-	cfg := &AppConfig{
-		KachaAppID:   os.Getenv("KACHA_APP_ID"),
-		KachaAPIKey:  os.Getenv("KACHA_API_KEY"),
-		KachaBaseURL: os.Getenv("KACHA_BASE_URL"),
-		Port:         os.Getenv("PORT"),
-	}
+    cfg := &AppConfig{
+        // Env var names switched to username/password
+        KachaAppID:   os.Getenv("KACHA_USERNAME"),
+        KachaAPIKey:  os.Getenv("KACHA_PASSWORD"),
+        KachaBaseURL: os.Getenv("KACHA_BASE_URL"),
+        Port:         os.Getenv("PORT"),
+    }
 
 	if cfg.Port == "" {
 		cfg.Port = "8080"
 	}
 
-	if cfg.KachaAppID == "" || cfg.KachaAPIKey == "" {
-		return nil, fmt.Errorf("missing required env: KACHA_APP_ID and KACHA_API_KEY")
-	}
+    if cfg.KachaAppID == "" || cfg.KachaAPIKey == "" {
+        return nil, fmt.Errorf("missing required env: KACHA_USERNAME and KACHA_PASSWORD")
+    }
 
 	return cfg, nil
 }
