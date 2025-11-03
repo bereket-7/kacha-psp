@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"log"
 
-	"kacha-psp/internal/kacha"
-	"kacha-psp/pkg/config"
+	"kacha-psp/config"
+	kacha "kacha-psp/internal"
 )
 
 func main() {
@@ -21,8 +21,8 @@ func main() {
 	fmt.Println("=== Example 1: OTP-Based Payment Flow ===")
 	
 	// Step 1: Request payment (sends OTP to customer)
-	paymentReq := kacha.PaymentRequest{
-		Phone:       "251989840054",
+    	paymentReq := kacha.PaymentRequest{
+		Phone:       "251913609212",
 		Amount:      100,
 		TraceNumber: "70RNVPO548",
 		Reason:      "payment",
@@ -58,7 +58,7 @@ func main() {
 	fmt.Println("\n=== Example 2: Push USSD Payment Flow ===")
 
 	pushReq := kacha.PushUSSDRequest{
-		Phone:       "251989840054",
+		Phone:       "251913609212",
 		Amount:      200,
 		TraceNumber: "70RNVPO549",
 		CallbackURL: "https://fenan-domain.com/api/payment/callback",
@@ -79,8 +79,8 @@ func main() {
 	fmt.Println("\n=== Example 3: B2C Transfer Flow ===")
 
 	// Step 1: Validate transfer
-	transferReq := kacha.TransferRequest{
-		To:        "251989840054",
+	    transferReq := kacha.TransferRequest{
+	        To:        "251913609212",
 		Amount:    100,
 		Reason:    "fee",
 		ShortCode: "7865",
