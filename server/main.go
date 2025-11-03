@@ -1,13 +1,13 @@
 package main
 
 import (
-    "log"
-    "net/http"
+	"log"
+	"net/http"
 
-    "kacha-psp/internal/kacha"
-    "kacha-psp/pkg/config"
+	"kacha-psp/config"
+	"kacha-psp/internal/kacha"
 
-    "github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
