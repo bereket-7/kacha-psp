@@ -115,4 +115,3 @@ func main() {
 		fmt.Println("\nTransfer validation did not return PREPARED status, skipping transfer execution")
 	}
 }
-
