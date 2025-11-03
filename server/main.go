@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"kacha-psp/config"
-	"kacha-psp/internal/kacha"
+	kacha "kacha-psp/internal"
 
 	"github.com/gin-gonic/gin"
 )
@@ -111,12 +111,6 @@ func main() {
 
 		// Process the callback notification
 		log.Printf("Received callback notification: %+v", notification)
-
-		// TODO: Implement your business logic here
-		// For example:
-		// - Update database with transaction status
-		// - Send notification to user
-		// - Process order fulfillment
 
 		// Respond to Kacha that we received the callback
 		c.JSON(http.StatusOK, gin.H{
