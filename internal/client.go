@@ -10,7 +10,7 @@ import (
 
 const (
 	// DefaultBaseURL is the default base URL for Kacha API
-	DefaultBaseURL = "https://api.kacha.com"
+	DefaultBaseURL = "https://docs.kacha.net/v1"
 	// PaymentRequestEndpoint is the endpoint for payment request
 	PaymentRequestEndpoint = "/api/v1/orgs/payment/request"
 	// PaymentAuthorizeEndpoint is the endpoint for payment authorization
@@ -25,26 +25,26 @@ const (
 
 // Client represents a Kacha API client
 type Client struct {
-	appID      string
-	apiKey     string
+    username   string
+    password   string
 	baseURL    string
 	httpClient *resty.Client
 }
 
 // NewClient creates a new Kacha API client
-func NewClient(appID, apiKey string) *Client {
-	return NewClientWithBaseURL(appID, apiKey, DefaultBaseURL)
+func NewClient(username, password string) *Client {
+    return NewClientWithBaseURL(username, password, DefaultBaseURL)
 }
 
 // NewClientWithBaseURL creates a new Kacha API client with a custom base URL
-func NewClientWithBaseURL(appID, apiKey, baseURL string) *Client {
+func NewClientWithBaseURL(username, password, baseURL string) *Client {
 	client := resty.New()
 	
 	// Set base URL
 	client.SetBaseURL(baseURL)
 	
 	// Set Basic Auth header
-	auth := base64.StdEncoding.EncodeToString([]byte(fmt.Sprintf("%s:%s", appID, apiKey)))
+    auth := base64.StdEncoding.EncodeToString([]byte(fmt.Sprintf("%s:%s", username, password)))
 	client.SetHeader("Authorization", fmt.Sprintf("Basic %s", auth))
 	
 	// Set default headers
@@ -55,8 +55,8 @@ func NewClientWithBaseURL(appID, apiKey, baseURL string) *Client {
 	// client.SetDebug(true)
 	
 	return &Client{
-		appID:      appID,
-		apiKey:     apiKey,
+        username:   username,
+        password:   password,
 		baseURL:    baseURL,
 		httpClient: client,
 	}
