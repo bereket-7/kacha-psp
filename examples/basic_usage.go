@@ -3,22 +3,19 @@ package main
 import (
 	"fmt"
 	"log"
-	"os"
 
 	"kacha-psp/internal/kacha"
+	"kacha-psp/pkg/config"
 )
 
 func main() {
-	// Get credentials from environment variables
-	appID := os.Getenv("KACHA_APP_ID")
-	apiKey := os.Getenv("KACHA_API_KEY")
-
-	if appID == "" || apiKey == "" {
-		log.Fatal("KACHA_APP_ID and KACHA_API_KEY environment variables are required")
+	cfg, err := config.Load()
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	// Initialize Kacha client
-	client := kacha.NewClient(appID, apiKey)
+	client := kacha.NewClient(cfg.KachaAppID, cfg.KachaAPIKey)
 
 	// Example 1: OTP-Based Payment Flow
 	fmt.Println("=== Example 1: OTP-Based Payment Flow ===")
