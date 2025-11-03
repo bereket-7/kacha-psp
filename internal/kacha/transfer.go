@@ -5,11 +5,10 @@ import (
 	"net/http"
 )
 
-// ValidateTransfer validates a B2C transfer before execution
-// This endpoint checks:
-// - If the account number (phone number) is valid
-// - If there is sufficient funds in the Business account
-// Returns customer information and transfer details with status 'PREPARED' if successful
+/** ValidateTransfer validates a B2C transfer before execution
+This endpoint checks: - If the account number (phone number) is valid
+- If there is sufficient funds in the Business account
+Returns customer information and transfer details with status 'PREPARED' if successful **/
 func (c *Client) ValidateTransfer(req TransferRequest) (*TransferValidateResponse, error) {
 	var response TransferValidateResponse
 	var errorResp ErrorResponse
