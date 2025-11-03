@@ -89,7 +89,7 @@ The server will start on port 8080 (or the port specified in the PORT environmen
 curl -X POST http://localhost:8080/api/payment/request \
   -H "Content-Type: application/json" \
   -d '{
-    "phone": "251989840054",
+    "phone": "251913609212",
     "amount": 100,
     "trace_number": "70RNVPO548",
     "reason": "payment"
@@ -124,7 +124,7 @@ curl -X POST http://localhost:8080/api/payment/authorize \
 curl -X POST http://localhost:8080/api/payment/push-ussd \
   -H "Content-Type: application/json" \
   -d '{
-    "phone": "251989840054",
+    "phone": "251913609212",
     "amount": 100,
     "trace_number": "70RNVPO549",
     "callback_url": "https://your-domain.com/api/payment/callback"
@@ -139,7 +139,7 @@ curl -X POST http://localhost:8080/api/payment/push-ussd \
 curl -X POST http://localhost:8080/api/transfer/validate \
   -H "Content-Type: application/json" \
   -d '{
-    "to": "251989840054",
+    "to": "251913609212",
     "amount": 100,
     "reason": "fee",
     "short_code": "7865"
@@ -152,12 +152,12 @@ Response:
   "success": true,
   "status": "PREPARED",
   "message": "Transfer validated successfully",
-  "to": "251989840054",
+  "to": "251913609212",
   "amount": 100,
   "reason": "fee",
   "short_code": "7865",
   "customer_info": {
-    "phone": "251989840054",
+    "phone": "251913609212",
     "name": "John Doe",
     "account_id": "ACC123456"
   }
@@ -170,7 +170,7 @@ Response:
 curl -X POST http://localhost:8080/api/transfer \
   -H "Content-Type: application/json" \
   -d '{
-    "to": "251989840054",
+    "to": "251913609212",
     "amount": 100,
     "reason": "fee",
     "short_code": "7865"
@@ -184,7 +184,7 @@ Response:
   "status": "completed",
   "message": "Transfer completed successfully",
   "transaction_id": "TXN123456789",
-  "to": "251989840054",
+  "to": "251913609212",
   "amount": 100,
   "reference": "REF987654321"
 }
@@ -207,7 +207,7 @@ func main() {
     
     // Make payment request
     req := kacha.PaymentRequest{
-        Phone:       "251989840054",
+        Phone:       "251913609212",
         Amount:      100,
         TraceNumber: "70RNVPO548",
         Reason:      "payment",
@@ -238,7 +238,7 @@ func main() {
     
     // B2C Transfer Example
     transferReq := kacha.TransferRequest{
-        To:        "251989840054",
+        To:        "251913609212",
         Amount:    100,
         Reason:    "fee",
         ShortCode: "7865",
