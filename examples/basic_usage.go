@@ -2,10 +2,9 @@ package main
 
 import (
 	"fmt"
-	"log"
-
 	"kacha-psp/config"
-	kacha "kacha-psp/internal"
+	kacha "kacha-psp/kacha"
+	"log"
 )
 
 func main() {
@@ -23,7 +22,7 @@ func main() {
 	// Step 1: Request payment (sends OTP to customer)
     	paymentReq := kacha.PaymentRequest{
 		Phone:       "251913609212",
-		Amount:      100,
+		Amount:      10,
 		TraceNumber: "70RNVPO548",
 		Reason:      "payment",
 	}
