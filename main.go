@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"kacha-psp/config"
-	kacha "kacha-psp/internal"
+	kacha "kacha-psp/kacha"
 
 	"github.com/gin-gonic/gin"
 )
@@ -17,8 +17,8 @@ func main() {
     }
 
     // Initialize Kacha client using username/password from config
-    username := cfg.KachaAppID
-    password := cfg.KachaAPIKey
+    username := cfg.KachaUsername
+    password := cfg.KachaPassword
     var client *kacha.Client
     if cfg.KachaBaseURL != "" {
         client = kacha.NewClientWithBaseURL(username, password, cfg.KachaBaseURL)
