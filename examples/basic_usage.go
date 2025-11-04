@@ -15,7 +15,7 @@ func main() {
 	}
 
 	// Initialize Kacha client
-	client := kacha.NewClient(cfg.KachaAppID, cfg.KachaAPIKey)
+	client := kacha.NewClient(cfg.KachaUsername, cfg.KachaPassword)
 
 	// Example 1: OTP-Based Payment Flow
 	fmt.Println("=== Example 1: OTP-Based Payment Flow ===")
