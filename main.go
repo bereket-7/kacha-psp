@@ -3,6 +3,7 @@ package main
 import (
 	"kacha-psp/config"
 	kacha "kacha-psp/kacha"
+	"kacha-psp/utils"
 	"log"
 	"net/http"
 
@@ -72,7 +73,8 @@ func main() {
 
 		c.JSON(http.StatusOK, resp)
 	})
-
+	
+		// Push USSD payment request endpoint
 	r.POST("/pay", func(c *gin.Context) {
 		var req kacha.PushUSSDRequest
 		if err := c.ShouldBindJSON(&req); err != nil {
@@ -90,13 +92,14 @@ func main() {
 		}
 
 		client := kacha.NewClientWithBaseURL(req.Username, req.Password, cfg.KachaBaseURL)
-		resp, err := client.RequestPushUSSD(req)
+		kachaResp, err := client.RequestPushUSSD(req)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
 
-		c.JSON(http.StatusOK, resp)
+		pspResp := utils.MapPushUSSDToPSP(kachaResp, err == nil)
+		c.JSON(http.StatusOK, pspResp)
 	})
 
 	r.POST("/callback", func(c *gin.Context) {
@@ -135,6 +138,8 @@ func main() {
 		c.JSON(http.StatusOK, resp)
 	})
 
+
+	// B2C Transfer endpoint
 	r.POST("/withdrawal", func(c *gin.Context) {
 		var req kacha.TransferRequest
 		if err := c.ShouldBindJSON(&req); err != nil {
@@ -152,13 +157,14 @@ func main() {
 		}
 
 		client := kacha.NewClientWithBaseURL(req.Username, req.Password, cfg.KachaBaseURL)
-		resp, err := client.Transfer(req)
+		kachaResp, err := client.Transfer(req)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
 
-		c.JSON(http.StatusOK, resp)
+		pspResp := utils.MapTransferToPSP(kachaResp, err == nil)
+		c.JSON(http.StatusOK, pspResp)
 	})
 
 	log.Printf("Starting on port %s", cfg.Port)
