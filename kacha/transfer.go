@@ -2,6 +2,7 @@ package kacha
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 )
 
@@ -13,6 +14,8 @@ func (c *Client) ValidateTransfer(req TransferRequest) (*TransferValidateRespons
 	var response TransferValidateResponse
 	var errorResp ErrorResponse
 
+	log.Printf("[Kacha] ValidateTransfer -> endpoint=%s payload=%+v", TransferValidateEndpoint, req)
+
 	resp, err := c.httpClient.R().
 		SetBody(req).
 		SetResult(&response).
@@ -20,12 +23,20 @@ func (c *Client) ValidateTransfer(req TransferRequest) (*TransferValidateRespons
 		Post(TransferValidateEndpoint)
 
 	if err != nil {
+		log.Printf("[Kacha] ValidateTransfer error: %v", err)
 		return nil, fmt.Errorf("failed to validate transfer: %w", err)
 	}
 
+	log.Printf("[Kacha] ValidateTransfer <- status=%d response=%+v errorResponse=%+v",
+		resp.StatusCode(), response, errorResp)
+
 	if resp.StatusCode() != http.StatusOK {
-		if errorResp.Message != "" {
-			return nil, fmt.Errorf("transfer validation failed: %s (code: %s)", errorResp.Message, errorResp.Code)
+		if errorResp.Error != nil {
+			return nil, fmt.Errorf("transfer validation failed: %s (status_code: %s, detail: %s)",
+				errorResp.Error.Message,
+				errorResp.Error.StatusCode,
+				errorResp.Error.Detail,
+			)
 		}
 		return nil, fmt.Errorf("transfer validation failed with status code: %d", resp.StatusCode())
 	}
@@ -39,6 +50,8 @@ func (c *Client) Transfer(req TransferRequest) (*TransferResponse, error) {
 	var response TransferResponse
 	var errorResp ErrorResponse
 
+	log.Printf("[Kacha] Transfer -> endpoint=%s payload=%+v", TransferEndpoint, req)
+
 	resp, err := c.httpClient.R().
 		SetBody(req).
 		SetResult(&response).
@@ -46,16 +59,23 @@ func (c *Client) Transfer(req TransferRequest) (*TransferResponse, error) {
 		Post(TransferEndpoint)
 
 	if err != nil {
+		log.Printf("[Kacha] Transfer error: %v", err)
 		return nil, fmt.Errorf("failed to execute transfer: %w", err)
 	}
 
+	log.Printf("[Kacha] Transfer <- status=%d response=%+v errorResponse=%+v",
+		resp.StatusCode(), response, errorResp)
+
 	if resp.StatusCode() != http.StatusOK && resp.StatusCode() != http.StatusCreated {
-		if errorResp.Message != "" {
-			return nil, fmt.Errorf("transfer failed: %s (code: %s)", errorResp.Message, errorResp.Code)
+		if errorResp.Error != nil {
+			return nil, fmt.Errorf("transfer failed: %s (status_code: %s, detail: %s)",
+				errorResp.Error.Message,
+				errorResp.Error.StatusCode,
+				errorResp.Error.Detail,
+			)
 		}
 		return nil, fmt.Errorf("transfer failed with status code: %d", resp.StatusCode())
 	}
 
 	return &response, nil
 }
-
