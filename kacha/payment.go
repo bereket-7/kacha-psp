@@ -1,6 +1,7 @@
 package kacha
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -11,7 +12,8 @@ func (c *Client) RequestPayment(req PaymentRequest) (*PaymentRequestResponse, er
 	var response PaymentRequestResponse
 	var errorResp ErrorResponse
 
-	log.Printf("[Kacha] RequestPayment -> endpoint=%s payload=%+v", PaymentRequestEndpoint, req)
+	jsonData, _ := json.Marshal(req)
+	log.Printf("[Kacha] RequestPayment -> endpoint=%s payload(JSON)=%s", PaymentRequestEndpoint, string(jsonData))
 
 	resp, err := c.httpClient.R().
 		SetBody(req).
@@ -46,7 +48,8 @@ func (c *Client) AuthorizePayment(req PaymentAuthorizeRequest) (*PaymentAuthoriz
 	var response PaymentAuthorizeResponse
 	var errorResp ErrorResponse
 
-	log.Printf("[Kacha] AuthorizePayment -> endpoint=%s payload=%+v", PaymentAuthorizeEndpoint, req)
+	jsonData, _ := json.Marshal(req)
+	log.Printf("[Kacha] AuthorizePayment -> endpoint=%s payload(JSON)=%s", PaymentAuthorizeEndpoint, string(jsonData))
 
 	resp, err := c.httpClient.R().
 		SetBody(req).
@@ -81,7 +84,8 @@ func (c *Client) RequestPushUSSD(req PushUSSDRequest) (*PushUSSDResponse, error)
 	var response PushUSSDResponse
 	var errorResp ErrorResponse
 
-	log.Printf("[Kacha] RequestPushUSSD -> endpoint=%s payload=%+v", PushUSSDEndpoint, req)
+	jsonData, _ := json.Marshal(req)
+	log.Printf("[Kacha] RequestPushUSSD -> endpoint=%s payload(JSON)=%s", PushUSSDEndpoint, string(jsonData))
 
 	resp, err := c.httpClient.R().
 		SetBody(req).

@@ -16,13 +16,24 @@ type PaymentAuthorizeRequest struct {
 	OTP       int    `json:"otp" validate:"required"`
 }
 
-type PushUSSDRequest struct {
+// Full request received by your PSP API (includes credentials)
+type PSPPushUSSDRequest struct {
 	Username    string `json:"username"`
 	Password    string `json:"password"`
-	Phone       string `json:"phone" validate:"required"`
-	Amount      int    `json:"amount" validate:"required,min=1"`
-	TraceNumber string `json:"trace_number" validate:"required"`
-	CallbackURL string `json:"callback_url" validate:"required,url"`
+	Phone       string `json:"phone"`
+	Amount      int    `json:"amount"`
+	TraceNumber string `json:"trace_number"`
+	CallbackURL string `json:"callback_url"`
+	Reason      string `json:"reason"`
+}
+
+// Actual payload sent to Kacha (excludes credentials)
+type PushUSSDRequest struct {
+	Phone       string `json:"phone"`
+	Amount      int    `json:"amount"`
+	TraceNumber string `json:"trace_number"`
+	CallbackURL string `json:"callback_url"`
+	Reason      string `json:"reason"`
 }
 
 type PaymentRequestResponse struct {

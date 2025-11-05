@@ -73,10 +73,9 @@ func main() {
 
 		c.JSON(http.StatusOK, resp)
 	})
-	
-		// Push USSD payment request endpoint
+	// Push USSD payment request endpoint
 	r.POST("/pay", func(c *gin.Context) {
-		var req kacha.PushUSSDRequest
+		var req kacha.PSPPushUSSDRequest
 		if err := c.ShouldBindJSON(&req); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
@@ -92,7 +91,16 @@ func main() {
 		}
 
 		client := kacha.NewClientWithBaseURL(req.Username, req.Password, cfg.KachaBaseURL)
-		kachaResp, err := client.RequestPushUSSD(req)
+
+		kachaReq := kacha.PushUSSDRequest{
+			Phone:       req.Phone,
+			Amount:      req.Amount,
+			TraceNumber: req.TraceNumber,
+			CallbackURL: req.CallbackURL,
+			Reason:      req.Reason,
+		}
+
+		kachaResp, err := client.RequestPushUSSD(kachaReq)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
@@ -101,6 +109,7 @@ func main() {
 		pspResp := utils.MapPushUSSDToPSP(kachaResp, err == nil)
 		c.JSON(http.StatusOK, pspResp)
 	})
+
 
 	r.POST("/callback", func(c *gin.Context) {
 		var notification kacha.CallbackNotification
