@@ -161,7 +161,7 @@ func main() {
 		c.JSON(http.StatusOK, resp)
 	})
 
-	log.Printf("Server starting on port %s", cfg.Port)
+	log.Printf("Starting on port %s", cfg.Port)
 	if err := r.Run(":" + cfg.Port); err != nil {
 		log.Fatal(err)
 	}
