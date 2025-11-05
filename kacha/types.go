@@ -1,6 +1,8 @@
 package kacha
 
 type PaymentRequest struct {
+	Username    string `json:"username"`
+	Password    string `json:"password"`
 	Phone       string `json:"phone" validate:"required"`
 	Amount      int    `json:"amount" validate:"required,min=1"`
 	TraceNumber string `json:"trace_number" validate:"required"`
@@ -8,11 +10,15 @@ type PaymentRequest struct {
 }
 
 type PaymentAuthorizeRequest struct {
+	Username  string `json:"username"`
+	Password  string `json:"password"`
 	Reference string `json:"reference" validate:"required"`
 	OTP       int    `json:"otp" validate:"required"`
 }
 
 type PushUSSDRequest struct {
+	Username    string `json:"username"`
+	Password    string `json:"password"`
 	Phone       string `json:"phone" validate:"required"`
 	Amount      int    `json:"amount" validate:"required,min=1"`
 	TraceNumber string `json:"trace_number" validate:"required"`
@@ -55,6 +61,8 @@ type CallbackNotification struct {
 }
 
 type TransferRequest struct {
+	Username  string `json:"username"`
+	Password  string `json:"password"`
 	To        string `json:"to" validate:"required"`
 	Amount    int    `json:"amount" validate:"required,min=1"`
 	Reason    string `json:"reason" validate:"required"`
