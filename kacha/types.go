@@ -96,6 +96,15 @@ type TransferResponse struct {
 	Reference     string `json:"reference,omitempty"`
 }
 
+type PSPResponse struct {
+	ReferenceID string `json:"referenceId"`
+	Status      string `json:"status"`
+	Message     string `json:"message"`
+	PSPTxID     string `json:"pspTxId"`
+	PSPData     string `json:"pspData"`
+	Signature   string `json:"signature"`
+}
+
 type ErrorDetails struct {
 	Status     string `json:"status,omitempty"`
 	StatusCode string `json:"status_code,omitempty"`
