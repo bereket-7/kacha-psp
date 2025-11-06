@@ -75,8 +75,37 @@ func main() {
 	})
 	
 		// Push USSD payment request endpoint
+	// r.POST("/pay", func(c *gin.Context) {
+	// 	var req kacha.PushUSSDRequest
+	// 	if err := c.ShouldBindJSON(&req); err != nil {
+	// 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	// 		return
+	// 	}
+
+	// 	// if req.Username == "" || req.Password == "" {
+	// 	// 	c.JSON(http.StatusBadRequest, gin.H{"error": "username and password are required"})
+	// 	// 	return
+	// 	// }
+	// 	if req.Phone == "" || req.Amount <= 0 || req.TraceNumber == "" || req.CallbackURL == "" {
+	// 		c.JSON(http.StatusBadRequest, gin.H{"error": "phone, amount, trace_number, and callback_url are required"})
+	// 		return
+	// 	}
+
+	// 	client := kacha.NewClientWithBaseURL(req.Username, req.Password, cfg.KachaBaseURL)
+	// 	kachaResp, err := client.RequestPushUSSD(req)
+	// 	if err != nil {
+	// 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	// 		return
+	// 	}
+
+	// 	pspResp := utils.MapPushUSSDToPSP(kachaResp, err == nil)
+	// 	c.JSON(http.StatusOK, pspResp)
+	// })
+
+	
+	// Push USSD payment request endpoint
 	r.POST("/pay", func(c *gin.Context) {
-		var req kacha.PushUSSDRequest
+		var req kacha.PSPPushUSSDRequest
 		if err := c.ShouldBindJSON(&req); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
@@ -91,8 +120,19 @@ func main() {
 			return
 		}
 
+		// Create Kacha client with credentials (for Basic Auth)
 		client := kacha.NewClientWithBaseURL(req.Username, req.Password, cfg.KachaBaseURL)
-		kachaResp, err := client.RequestPushUSSD(req)
+
+		// Prepare payload for Kacha (without credentials)
+		kachaReq := kacha.PushUSSDRequest{
+			Phone:       req.Phone,
+			Amount:      req.Amount,
+			TraceNumber: req.TraceNumber,
+			CallbackURL: req.CallbackURL,
+			Reason:      req.Reason,
+		}
+
+		kachaResp, err := client.RequestPushUSSD(kachaReq)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
@@ -101,6 +141,7 @@ func main() {
 		pspResp := utils.MapPushUSSDToPSP(kachaResp, err == nil)
 		c.JSON(http.StatusOK, pspResp)
 	})
+
 
 	r.POST("/callback", func(c *gin.Context) {
 		var notification kacha.CallbackNotification
